@@ -15,7 +15,7 @@
 		function search($query, $params = array())
 		{
 			$url = "http://search.twitter.com/search.{$this->format}";
-			$get = array('q' => urlencode($query));
+			$get = array('q' => $query);
 			$get = array_merge($get, $params);
 			return $this->request($url, array('get'=>$get));
 		}

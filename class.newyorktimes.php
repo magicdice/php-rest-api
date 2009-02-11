@@ -40,7 +40,7 @@
 		function search($query, $params = array())
 		{
 			$url = $this->url_base;
-			$get['query'] = urlencode($query);
+			$get['query'] = $query;
 			$get = array_merge($get, $params);
 			return $this->request($url, array('get'=>$get));
 		}
