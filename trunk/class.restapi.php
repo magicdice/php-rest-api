@@ -170,6 +170,7 @@
 					return simplexml_load_string($response);
 					break;
 				case 'php':
+				case 'php_serial':
 					return unserialize($response);
 				default:
 					return $response;
