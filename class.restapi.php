@@ -64,7 +64,7 @@
 			}
 			
 			$this->cache_dir = rtrim($this->cache_dir, '/');
-			if ($cache_life && $this->cache_dir && is_dir($this->cache_dir) && is_writable($this->cache_dir))
+			if ($post===false && $cache_life && $this->cache_dir && is_dir($this->cache_dir) && is_writable($this->cache_dir))
 				$use_cache = true;
 			else
 				$use_cache = false;
@@ -93,7 +93,7 @@
 			if(!is_null($this->username) && !is_null($this->password))
 			{
 				if ($this->debug)
-					echo "AUTH: $username:$password\n";
+					echo "AUTH: {$this->username}:{$this->password}\n";
 				curl_setopt($ch, CURLOPT_USERPWD, $this->username.':'.$this->password);
 			}
 			
