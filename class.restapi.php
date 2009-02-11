@@ -37,13 +37,8 @@
 			$this->cache_ext = $ext;
 		}
 		
-		function request($url, $extra = array())
+		function request($url, $extra = array(), $force_post = false)
 		{
-			if (isset($extra['post']))
-				$post = $extra['post'];
-			else
-				$post = false;
-
 			if (isset($extra['cache_life']))
 				$cache_life = $extra['cache_life'];
 			else
@@ -62,6 +57,22 @@
 					$url .= urlencode($param) . '=' . urlencode($value);
 				}
 			}
+			
+			if (isset($extra['post']) && is_array($extra['post']) && count($extra['post'] > 0))
+			{
+				$post = "";
+				$first = true;
+				foreach ($extra['post'] as $param=>$value)
+				{
+					if (!$first)
+						$post .= '&';
+					else
+						$first = false;
+					$post .= urlencode($param) . '=' . urlencode($value);
+				}
+			}
+			else
+				$post = false;
 			
 			$this->cache_dir = rtrim($this->cache_dir, '/');
 			if ($post===false && $cache_life && $this->cache_dir && is_dir($this->cache_dir) && is_writable($this->cache_dir))
@@ -82,12 +93,13 @@
 				echo "REQUEST: $url\n";
 
 			$ch = curl_init($url);
-			if($post !== false)
+			if($post !== false || $force_post)
 			{
 				if ($this->debug)
 					echo "POST: $post\n";
 				curl_setopt($ch, CURLOPT_POST, true);
-				curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+				if ($post)
+					curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
 	        }
 
 			if(!is_null($this->username) && !is_null($this->password))
@@ -111,7 +123,8 @@
 				echo "\nINFO:\n";
 				print_r($info);
 				echo "\nRESPONSE:\n";
-				echo $response;
+				echo htmlspecialchars($response);
+				echo "\n";
 			}
 
 			$object = $this->verify($info, $response);
