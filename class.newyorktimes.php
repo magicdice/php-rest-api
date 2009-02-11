@@ -30,16 +30,18 @@
 			return parent::request($url, $extra);
 		}
 		
-		function search($query, $start = false, $end = false, $rank = false)
+		/*
+			Available parameters:
+				begin_date: YYYYMMDD
+				end_date: YYYYMMDD
+				rank: "newest" (default), "oldest", or "closest"
+				... and more
+		*/
+		function search($query, $params = array())
 		{
 			$url = $this->url_base;
-			$get = array('query' => urlencode($query));
-			if ($start !== false)
-				$get['begin_date'] = $start;
-			if ($end !== false)
-				$get['end_date'] = $end;
-			if ($rank !== false)
-				$get['rank'] = $rank;
+			$get['query'] = urlencode($query);
+			$get = array_merge($get, $params);
 			return $this->request($url, array('get'=>$get));
 		}
 	}
