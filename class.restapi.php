@@ -165,6 +165,8 @@
 					return json_decode($response);
 					break;
 				case 'xml':
+				case 'atom':
+				case 'rss':
 					return simplexml_load_string($response);
 					break;
 				case 'php':
