@@ -37,6 +37,13 @@
 			$this->cache_ext = $ext;
 		}
 		
+		function setCurlOpts($ch)
+		{
+	        curl_setopt($ch, CURLOPT_FOLLOWLOCATION,1);
+	        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 4);
+			curl_setopt($ch, CURLOPT_TIMEOUT, 8);
+		}
 		function request($url, $extra = array(), $force_post = false)
 		{
 			if (isset($extra['cache_life']))
@@ -68,14 +75,15 @@
 						$post .= '&';
 					else
 						$first = false;
-					$post .= urlencode($param) . '=' . urlencode($value);
+					//$post .= urlencode($param) . '=' . urlencode($value);
+					$post .= $param . '=' . $value;
 				}
 			}
 			else
 				$post = false;
 			
 			$this->cache_dir = rtrim($this->cache_dir, '/');
-			if ($post===false && $cache_life && $this->cache_dir && is_dir($this->cache_dir) && is_writable($this->cache_dir))
+			if ($post===false && $force_post===false && $cache_life && $this->cache_dir && is_dir($this->cache_dir) && is_writable($this->cache_dir))
 				$use_cache = true;
 			else
 				$use_cache = false;
@@ -109,11 +117,13 @@
 				curl_setopt($ch, CURLOPT_USERPWD, $this->username.':'.$this->password);
 			}
 			
-	        curl_setopt($ch, CURLOPT_FOLLOWLOCATION,1);
-	        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 4);
-			curl_setopt($ch, CURLOPT_TIMEOUT, 8);
-
+			if (isset($extra['headers']) && is_array($extra['headers']) && count($extra['headers'] > 0))
+			{
+				curl_setopt($ch, CURLOPT_HTTPHEADER, $extra['headers']);
+			}
+			
+			$this->setCurlOpts($ch);
+			
 	        $response = curl_exec($ch);
         	$info = curl_getinfo($ch);
         	curl_close($ch);
@@ -162,6 +172,7 @@
 			switch ($this->format)
 			{
 				case 'json':
+				case 'js':
 					return json_decode($response);
 					break;
 				case 'xml':
