@@ -37,6 +37,11 @@
 			$this->cache_ext = $ext;
 		}
 		
+		function setCacheLife($life)
+		{
+			$this->cache_life = $life;
+		}
+		
 		function setCurlOpts($ch)
 		{
 	        curl_setopt($ch, CURLOPT_FOLLOWLOCATION,1);

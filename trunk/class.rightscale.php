@@ -88,4 +88,10 @@
 			$url = "right_scripts/$id.{$this->format}";
 			return $this->request($url);
 		}
+		
+		function getStatus($id)
+		{
+			$url = "statuses/$id.{$this->format}";
+			return $this->request($url);
+		}
 	}
