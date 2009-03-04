@@ -98,8 +98,14 @@
 				$cache_file = $this->cache_dir . '/' .  md5($url.'|'.$postargs.'|'.$this->username.'|'.$this->password);
 				if ($this->cache_ext)
 					$cache_file .= ".{$this->cache_ext}";
-				if (file_exists($cache_file) && ($this->cache_life < 0 || filemtime($cache_file) > time()-($this->cache_life)))
+				if ($this->debug)
+					echo "CHECKING CACHE: $cache_file\n";
+				if (file_exists($cache_file) && ($cache_life < 0 || filemtime($cache_file) > time()-($this->cache_life)))
+				{	
+					if ($this->debug)
+						echo "USING CACHED DATA: $cache_file\n";
 					return $this->objectify(file_get_contents($cache_file));
+				}
 			}
 			
 			if ($this->debug)
