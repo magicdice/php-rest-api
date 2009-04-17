@@ -70,18 +70,25 @@
 				}
 			}
 			
-			if (isset($extra['post']) && is_array($extra['post']) && count($extra['post'] > 0))
+			if (isset($extra['post']))
 			{
-				$post = "";
-				$first = true;
-				foreach ($extra['post'] as $param=>$value)
+				if (is_array($extra['post']) && count($extra['post'] > 0))
 				{
-					if (!$first)
-						$post .= '&';
-					else
-						$first = false;
-					//$post .= urlencode($param) . '=' . urlencode($value);
-					$post .= $param . '=' . $value;
+					$post = "";
+					$first = true;
+					foreach ($extra['post'] as $param=>$value)
+					{
+						if (!$first)
+							$post .= '&';
+						else
+							$first = false;
+						//$post .= urlencode($param) . '=' . urlencode($value);
+						$post .= $param . '=' . $value;
+					}
+				}
+				elseif (is_string($extra['post']))
+				{
+					$post = $extra['post'];
 				}
 			}
 			else
