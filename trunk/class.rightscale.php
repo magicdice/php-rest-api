@@ -1,4 +1,6 @@
 <?php
+	require_once('class.restapi.php');
+
 	class RightScale extends RestApi
 	{
 		protected $api_version = '1.0';

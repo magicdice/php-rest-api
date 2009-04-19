@@ -1,5 +1,7 @@
 <?php
+	require_once('class.twitter.php');
 	require_once('class.oauth.php');
+	
 	class OATwitter extends Twitter
 	{
 		private $oa_method;

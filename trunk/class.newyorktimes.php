@@ -1,4 +1,6 @@
 <?php
+	require_once('class.restapi.php');
+
 	class NewYorkTimes extends RestApi
 	{
 		protected $api_key;

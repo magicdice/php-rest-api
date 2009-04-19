@@ -1,4 +1,6 @@
 <?php
+	require_once('class.restapi.php');
+
 	class NikePlus extends RestApi
 	{
 		protected $cache_ext = 'nike';

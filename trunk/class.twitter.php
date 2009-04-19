@@ -1,4 +1,6 @@
 <?php
+	require_once('class.restapi.php');
+	
 	class Twitter extends RestApi
 	{
 		protected $cache_ext = 'twitter';
