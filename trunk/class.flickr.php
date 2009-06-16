@@ -65,6 +65,16 @@
 			$get = array_merge($get, $params);
 			return $this->request($method, array('get'=>$get));
 		}
+		
+		function photos_search($params = array())
+		{
+			$method = 'flickr.photos.search';
+			$get = array(
+				'extras' => 'date_upload,date_taken,owner_name'
+			);
+			$get = array_merge($get, $params);
+			return $this->request($method, array('get'=>$get));
+		}
 
 		function favorites_getPublicList($user_id, $params = array())
 		{
@@ -123,24 +133,26 @@
 
 		function getImg($size =	'')	// mstb
 		{
-				if (in_array($size,	array('s', 't',	'm', 'b')))
-						$this->size	= "_$size";
-				else
-						$this->size	= "";
-				$url = "http://farm{$this->farm}.static.flickr.com/{$this->server}/{$this->id}_{$this->secret}{$this->size}.jpg";
-				return $url;
+			if (in_array($size,	array('s', 't',	'm', 'b')))
+					$this->size	= "_$size";
+			else
+					$this->size	= "";
+			$url = "http://farm{$this->farm}.static.flickr.com/{$this->server}/{$this->id}_{$this->secret}{$this->size}.jpg";
+			return $url;
 		}
 
-		function getUrl()
+		function getUrl($user = false)
 		{
-				$url = "http://www.flickr.com/photos/{$this->owner}/{$this->id}/";
-				return $url;
+			if (!$user)
+				$user = $this->owner;
+			$url = "http://www.flickr.com/photos/{$user}/{$this->id}/";
+			return $url;
 		}
 
 		function getAlt()
 		{
-				$alt = str_replace('"',	'\"', $this->title)	. '	by ' . str_replace('"',	'\"', $this->ownername);
-				return $alt;
+			$alt = str_replace('"',	'\"', $this->title)	. '	by ' . str_replace('"',	'\"', $this->ownername);
+			return $alt;
 		}
 
 }
