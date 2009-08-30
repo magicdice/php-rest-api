@@ -238,6 +238,11 @@
 		
 		
 		/********* ACCOUNT METHODS *********/
+		function rate_limit_status()
+		{
+			$url = "http://twitter.com/account/rate_limit_status.{$this->format}";
+			return $this->request($url);
+		}
 		
 		/********* FAVORITE METHODS *********/
 		function favorites($id = false, $page = false)
