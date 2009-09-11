@@ -1,4 +1,9 @@
 <?php
+	/*
+		PHP REST API
+		Jason Tan
+		http://code.google.com/p/php-rest-api/
+	*/
 	class RestApi
 	{
 		protected $username;
