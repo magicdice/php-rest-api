@@ -181,7 +181,7 @@
 		
 		function verify($info, $response)
 		{
-			if ($info['http_code'] != 200)
+			if (!preg_match('/^2[0-9]{2}$/', $info['http_code']))
 				return false;
 			
 			if ($response === false)
