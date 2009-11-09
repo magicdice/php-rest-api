@@ -88,6 +88,15 @@
 				return $this->request($url);
 		}
 		
+		function mentions($params = array())
+		{
+			$url = "http://twitter.com/statuses/mentions.{$this->format}";
+			if (count($params) > 0)
+				return $this->request($url, array('get'=>$params));
+			else
+				return $this->request($url);
+		}
+		
 		function destroy_status($id)
 		{
 			$url = "http://twitter.com/statuses/destroy/$id.{$this->format}";
@@ -98,7 +107,7 @@
 		
 		/********* USER METHODS *********/
 		
-		function friends($id = false, $page = false)
+		function friends($id = false, $page = false, $cursor = false)
 		{
 	        if ($id === false)
 	            $url = "http://twitter.com/statuses/friends.{$this->format}";
@@ -109,11 +118,13 @@
 			}
 			if ($page !== false && $page > 1)
 				return $this->request($url, array('get'=>array('page'=>$page)));
+			elseif ($cursor !== false)
+				return $this->request($url, array('get'=>array('cursor'=>$cursor)));
 			else
 				return $this->request($url);
 		}
 		
-		function followers($id = false, $page = false)
+		function followers($id = false, $page = false, $cursor = false)
 		{
 	        if ($id === false)
 	            $url = "http://twitter.com/statuses/followers.{$this->format}";
@@ -124,6 +135,8 @@
 			}
 			if ($page !== false && $page > 1)
 				return $this->request($url, array('get'=>array('page'=>$page)));
+			elseif ($cursor !== false)
+				return $this->request($url, array('get'=>array('cursor'=>$cursor)));
 			else
 				return $this->request($url);
 		}
@@ -258,6 +271,18 @@
 				return $this->request($url, array('get'=>array('page'=>$page)));
 			else
 				return $this->request($url);
+		}
+		
+		/********* NOTIFICATION METHODS *********/
+		function follow($id)
+		{
+			$url = "http://twitter.com/notifications/follow/{$id}.{$this->format}";
+			return $this->request($url, array(), true);
+		}
+		function leave($id)
+		{
+			$url = "http://twitter.com/notifications/leave/{$id}.{$this->format}";
+			return $this->request($url, array(), true);
 		}
 		
 	}
