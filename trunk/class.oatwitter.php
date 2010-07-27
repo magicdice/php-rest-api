@@ -8,6 +8,7 @@
 		private $consumer;
 		private $request_token;
 		private $access_token;
+		protected $endpoint = 'https://twitter.com';
 		
 		function __construct($consumer_key = false, $consumer_secret = false)
 		{
@@ -89,5 +90,37 @@
 		{
 			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 		    parent::setCurlOpts($ch);
+		}
+		
+		function request($url, $extra = array(), $force_post = false)
+		{
+			$oauth = array(
+				'oauth_version' => OAuthRequest::$version,
+				'oauth_nonce' => OAuthRequest::generate_nonce(),
+				'oauth_timestamp' => OAuthRequest::generate_timestamp(),
+				'oauth_consumer_key' => $this->consumer->key,
+				'oauth_token' => $this->access_token->key,
+				'oauth_signature_method'=>$this->oa_method->get_name()
+			);
+			
+			if (isset($extra['post']))
+				$params = $extra['post'];
+			elseif (isset($extra['get']))
+				$params = $extra['get'];
+			else
+				$params = array();
+			
+			if (isset($extra['post']) || $force_post)
+				$method = 'POST';
+			else
+				$method = 'GET';
+			
+			$params = array_merge($params, $oauth);
+			$request = new OAuthRequest($method, $url, $params);
+		    $params['oauth_signature'] = $request->build_signature($this->oa_method, $this->consumer, $this->access_token);
+
+			$extra[strtolower($method)] = $params;
+		    
+			return parent::request($url, $extra, $force_post);
 		}
 	}
