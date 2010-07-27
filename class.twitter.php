@@ -4,6 +4,7 @@
 	class Twitter extends RestApi
 	{
 		protected $cache_ext = 'twitter';
+		protected $endpoint = 'http://twitter.com';
 		
 		function __construct($username = false, $password = false)
 		{
@@ -16,7 +17,7 @@
 		
 		function public_timeline()
 		{
-			$url = "http://twitter.com/statuses/public_timeline.{$this->format}";
+			$url = "{$this->endpoint}/statuses/public_timeline.{$this->format}";
 			return $this->request($url);
 		}
 		
@@ -29,7 +30,7 @@
 		*/
 		function friends_timeline($params = array())
 		{
-			$url = "http://twitter.com/statuses/friends_timeline.{$this->format}";
+			$url = "{$this->endpoint}/statuses/friends_timeline.{$this->format}";
 			if (count($params) > 0)
 				return $this->request($url, array('get'=>$params));
 			else
@@ -46,11 +47,11 @@
 		function user_timeline($id = false, $params = array())
 		{
 	        if ($id === false)
-	            $url = "http://twitter.com/statuses/user_timeline.{$this->format}";
+	            $url = "{$this->endpoint}/statuses/user_timeline.{$this->format}";
 	        else
 			{
 				$id = urlencode($id);
-	            $url = "http://twitter.com/statuses/user_timeline/$id.{$this->format}";
+	            $url = "{$this->endpoint}/statuses/user_timeline/$id.{$this->format}";
 			}
 			if (count($params) > 0)
 				return $this->request($url, array('get'=>$params));
@@ -60,13 +61,13 @@
 		
 		function show_status($id)
 		{
-			$url = "http://twitter.com/statuses/show/$id.{$this->format}";
+			$url = "{$this->endpoint}/statuses/show/$id.{$this->format}";
 			return $this->request($url);
 		}
 		
 		function update_status($status, $reply_to = false)
 		{
-			$url = "http://twitter.com/statuses/update.{$this->format}";
+			$url = "{$this->endpoint}/statuses/update.{$this->format}";
 			$post = array('status' => $status);
 			if ($reply_to !== false)
 				$post['in_reply_to_status_id'] = $reply_to;
@@ -81,7 +82,7 @@
 		*/
 		function replies($params = array())
 		{
-			$url = "http://twitter.com/statuses/replies.{$this->format}";
+			$url = "{$this->endpoint}/statuses/replies.{$this->format}";
 			if (count($params) > 0)
 				return $this->request($url, array('get'=>$params));
 			else
@@ -90,7 +91,7 @@
 		
 		function mentions($params = array())
 		{
-			$url = "http://twitter.com/statuses/mentions.{$this->format}";
+			$url = "{$this->endpoint}/statuses/mentions.{$this->format}";
 			if (count($params) > 0)
 				return $this->request($url, array('get'=>$params));
 			else
@@ -99,7 +100,7 @@
 		
 		function destroy_status($id)
 		{
-			$url = "http://twitter.com/statuses/destroy/$id.{$this->format}";
+			$url = "{$this->endpoint}/statuses/destroy/$id.{$this->format}";
 			$post = array('id' => $id);
 			return $this->request($url, array('post'=>$post));
 		}
@@ -110,11 +111,11 @@
 		function friends($id = false, $page = false, $cursor = false)
 		{
 	        if ($id === false)
-	            $url = "http://twitter.com/statuses/friends.{$this->format}";
+	            $url = "{$this->endpoint}/statuses/friends.{$this->format}";
 	        else
 			{
 				$id = urlencode($id);
-	            $url = "http://twitter.com/statuses/friends/$id.{$this->format}";
+	            $url = "{$this->endpoint}/statuses/friends/$id.{$this->format}";
 			}
 			if ($page !== false && $page > 1)
 				return $this->request($url, array('get'=>array('page'=>$page)));
@@ -127,11 +128,11 @@
 		function followers($id = false, $page = false, $cursor = false)
 		{
 	        if ($id === false)
-	            $url = "http://twitter.com/statuses/followers.{$this->format}";
+	            $url = "{$this->endpoint}/statuses/followers.{$this->format}";
 	        else
 			{
 				$id = urlencode($id);
-	            $url = "http://twitter.com/statuses/followers/$id.{$this->format}";
+	            $url = "{$this->endpoint}/statuses/followers/$id.{$this->format}";
 			}
 			if ($page !== false && $page > 1)
 				return $this->request($url, array('get'=>array('page'=>$page)));
@@ -144,7 +145,7 @@
 		function show_user($id)
 		{
 			$id = urlencode($id);
-			$url = "http://twitter.com/users/show/{$id}.{$this->format}";
+			$url = "{$this->endpoint}/users/show/{$id}.{$this->format}";
 			return $this->request($url);
 		}
 		
@@ -159,7 +160,7 @@
 		*/
 		function direct_messages($params = array())
 		{
-			$url = "http://twitter.com/direct_messages.{$this->format}";
+			$url = "{$this->endpoint}/direct_messages.{$this->format}";
 			if (count($params) > 0)
 				return $this->request($url, array('get'=>$params));
 			else
@@ -174,7 +175,7 @@
 		*/
 		function sent_direct_messages($params = array())
 		{
-			$url = "http://twitter.com/direct_messages/sent.{$this->format}";
+			$url = "{$this->endpoint}/direct_messages/sent.{$this->format}";
 			if (count($params) > 0)
 				return $this->request($url, array('get'=>$params));
 			else
@@ -183,14 +184,14 @@
 		
 		function new_direct_message($user, $text)
 		{
-			$url = "http://twitter.com/direct_messages/new.{$this->format}";
+			$url = "{$this->endpoint}/direct_messages/new.{$this->format}";
 			$post = array('user' => $user, 'text' => $text);
 			return $this->request($url, array('post'=>$post));
 		}
 		
 		function destroy_direct_message($id)
 		{
-			$url = "http://twitter.com/direct_messages/destroy/$id.{$this->format}";
+			$url = "{$this->endpoint}/direct_messages/destroy/$id.{$this->format}";
 			$post = array('id' => $id);
 			return $this->request($url, array('post'=>$post));
 		}
@@ -201,7 +202,7 @@
 		function create_friendship($id, $follow = false)
 		{
 			$id = urlencode($id);
-			$url = "http://twitter.com/friendships/create/$id.{$this->format}";
+			$url = "{$this->endpoint}/friendships/create/$id.{$this->format}";
 			$post = array();
 			if ($follow)
 				$post['follow'] = 'true';
@@ -211,13 +212,13 @@
 		function destroy_friendship($id)
 		{
 			$id = urlencode($id);
-			$url = "http://twitter.com/friendships/destroy/$id.{$this->format}";
+			$url = "{$this->endpoint}/friendships/destroy/$id.{$this->format}";
 			return $this->request($url, array(), true);
 		}
 		
 		function exists($id1, $id2)
 		{
-			$url = "http://twitter.com/friendships/exists.{$this->format}";
+			$url = "{$this->endpoint}/friendships/exists.{$this->format}";
 			$get = array('user_a' => $id1, 'user_b' => $id2);
 			return $this->request($url, array('get'=>$get));
 		}
@@ -228,11 +229,11 @@
 		function friend_ids($id = false)
 		{
 	        if ($id === false)
-	            $url = "http://twitter.com/friends/ids.{$this->format}";
+	            $url = "{$this->endpoint}/friends/ids.{$this->format}";
 	        else
 			{
 				$id = urlencode($id);
-	            $url = "http://twitter.com/friends/ids/$id.{$this->format}";
+	            $url = "{$this->endpoint}/friends/ids/$id.{$this->format}";
 			}
 			return $this->request($url);
 		}
@@ -240,11 +241,11 @@
 		function follower_ids($id = false)
 		{
 	        if ($id === false)
-	            $url = "http://twitter.com/followers/ids.{$this->format}";
+	            $url = "{$this->endpoint}/followers/ids.{$this->format}";
 	        else
 			{
 				$id = urlencode($id);
-	            $url = "http://twitter.com/followers/ids/$id.{$this->format}";
+	            $url = "{$this->endpoint}/followers/ids/$id.{$this->format}";
 			}
 			return $this->request($url);
 		}
@@ -253,7 +254,13 @@
 		/********* ACCOUNT METHODS *********/
 		function rate_limit_status()
 		{
-			$url = "http://twitter.com/account/rate_limit_status.{$this->format}";
+			$url = "{$this->endpoint}/account/rate_limit_status.{$this->format}";
+			return $this->request($url);
+		}
+		
+		function verify_credentials()
+		{
+			$url = "{$this->endpoint}/account/verify_credentials.{$this->format}";
 			return $this->request($url);
 		}
 		
@@ -261,11 +268,11 @@
 		function favorites($id = false, $page = false)
 		{
 	        if ($id === false)
-	            $url = "http://twitter.com/favorites.{$this->format}";
+	            $url = "{$this->endpoint}/favorites.{$this->format}";
 	        else
 			{
 				$id = urlencode($id);
-	            $url = "http://twitter.com/favorites/$id.{$this->format}";
+	            $url = "{$this->endpoint}/favorites/$id.{$this->format}";
 			}
 			if ($page !== false && $page > 1)
 				return $this->request($url, array('get'=>array('page'=>$page)));
@@ -276,12 +283,12 @@
 		/********* NOTIFICATION METHODS *********/
 		function follow($id)
 		{
-			$url = "http://twitter.com/notifications/follow/{$id}.{$this->format}";
+			$url = "{$this->endpoint}/notifications/follow/{$id}.{$this->format}";
 			return $this->request($url, array(), true);
 		}
 		function leave($id)
 		{
-			$url = "http://twitter.com/notifications/leave/{$id}.{$this->format}";
+			$url = "{$this->endpoint}/notifications/leave/{$id}.{$this->format}";
 			return $this->request($url, array(), true);
 		}
 		
