@@ -41,7 +41,7 @@
 		
 		function getAuthorizeUrl($callback = false)
 		{
-			$url = "https://twitter.com/oauth/request_token";
+			$url = "https://api.twitter.com/oauth/request_token";
 			$req = OAuthRequest::from_consumer_and_token($this->consumer, null, 'GET', $url);
 		    $req->sign_request($this->oa_method, $this->consumer, null);
 		
@@ -72,7 +72,7 @@
 				else
 					return false;
 			}
-			$url = "https://twitter.com/oauth/access_token";
+			$url = "https://api.twitter.com/oauth/access_token";
 			$req = OAuthRequest::from_consumer_and_token($this->consumer, $this->request_token, 'GET', $url);
 			$req->sign_request($this->oa_method, $this->consumer, $this->request_token);
 		
