@@ -8,7 +8,7 @@
 		private $consumer;
 		private $request_token;
 		private $access_token;
-		protected $endpoint = 'https://twitter.com';
+		protected $endpoint = 'https://api.twitter.com/1';
 		
 		function __construct($consumer_key = false, $consumer_secret = false)
 		{
