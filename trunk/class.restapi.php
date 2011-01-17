@@ -47,6 +47,14 @@
 			$this->cache_life = $life;
 		}
 		
+		function getCacheFile($url, $post)
+		{
+			$cache_file = $this->cache_dir . '/' .  md5($url.'|'.$post.'|'.$this->username.'|'.$this->password);
+			if ($this->cache_ext)
+				$cache_file .= ".{$this->cache_ext}";
+			return $cache_file;
+		}
+		
 		function setCurlOpts($ch)
 		{
 	        curl_setopt($ch, CURLOPT_FOLLOWLOCATION,1);
@@ -54,6 +62,7 @@
 			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 4);
 			curl_setopt($ch, CURLOPT_TIMEOUT, 8);
 		}
+		
 		function request($url, $extra = array(), $force_post = false)
 		{
 			if (isset($extra['cache_life']))
@@ -64,15 +73,7 @@
 			if (isset($extra['get']) && is_array($extra['get']) && count($extra['get'] > 0))
 			{
 				$url .= '?';
-				$first = true;
-				foreach ($extra['get'] as $param=>$value)
-				{
-					if (!$first)
-						$url .= '&';
-					else
-						$first = false;
-					$url .= urlencode($param) . '=' . urlencode($value);
-				}
+				$url .= http_build_query($extra['get']);
 			}
 			
 			if (isset($extra['post']))
@@ -107,9 +108,7 @@
 			
 			if ($use_cache)
 			{
-				$cache_file = $this->cache_dir . '/' .  md5($url.'|'.$postargs.'|'.$this->username.'|'.$this->password);
-				if ($this->cache_ext)
-					$cache_file .= ".{$this->cache_ext}";
+				$cache_file = $this->getCacheFile($url, $post);
 				if ($this->debug)
 					echo "CHECKING CACHE: $cache_file\n";
 				if (file_exists($cache_file) && ($cache_life < 0 || filemtime($cache_file) > time()-($this->cache_life)))
@@ -211,4 +210,120 @@
 			}
 		}
 	}
-?>
+	
+	require_once('class.oauth.php');
+
+	class OAuthRestApi extends RestApi
+	{
+		protected $oa_method;
+		protected $consumer;
+		protected $request_token;
+		protected $access_token;
+		
+		function __construct($consumer_key, $consumer_secret)
+		{
+		    $this->consumer = new OAuthConsumer($consumer_key, $consumer_secret);			
+		    $this->oa_method = new OAuthSignatureMethod_HMAC_SHA1();
+			parent::__construct();
+		}
+		
+		function login($oauth_token, $oauth_token_secret)
+		{
+			$this->access_token = new OAuthConsumer($oauth_token, $oauth_token_secret);
+		}
+		
+		static function parseToken($string)
+		{
+			$token = array();
+			parse_str($string, $token);
+			if (isset($token['oauth_token']) && isset($token['oauth_token_secret']))
+				return new OAuthConsumer($token['oauth_token'], $token['oauth_token_secret']);
+			else
+				return false;
+		}
+		
+		function getAuthorizeUrl($request_url, $authorize_url, $callback = false)
+		{
+			$req = OAuthRequest::from_consumer_and_token($this->consumer, null, 'GET', $request_url);
+		    $req->sign_request($this->oa_method, $this->consumer, null);
+		
+			$format = $this->format;
+			$this->format = "text";
+			$result = parent::request($req->to_url(), array('cache_life'=>0));
+			$this->format = $format;
+			
+			if (($token = self::parseToken($result))===false)
+				return false;
+			
+			$this->request_token = $token;
+			$_SESSION['request_token'] = $token;
+			
+			$authorize_url .= "?oauth_token={$this->request_token->key}";
+			if ($callback)
+				$authorize_url .= "&oauth_callback=" . urlencode($callback);
+			return $authorize_url;
+		}
+		
+		function getAccessToken($access_url)
+		{
+			if (!is_object($this->request_token))
+			{
+				if (is_object($_SESSION['request_token']))
+					$this->request_token = $_SESSION['request_token'];
+				else
+					return false;
+			}
+			$req = OAuthRequest::from_consumer_and_token($this->consumer, $this->request_token, 'GET', $access_url);
+			$req->sign_request($this->oa_method, $this->consumer, $this->request_token);
+		
+			$format = $this->format;
+			$this->format = "text";
+			$result = parent::request($req->to_url(), array('cache_life'=>0));
+			$this->format = $format;
+			
+			if (($token = self::parseToken($result))===false)
+				return false;
+			return $this->access_token = $token;
+		}
+		
+		function getCacheFile($url)
+		{
+			$url = preg_replace('/[\?|&]oauth_version.*$/','',$url);
+			$cache_file = $this->cache_dir . '/' .  md5($url.'|'.$this->access_token->key);
+			if ($this->cache_ext)
+				$cache_file .= ".{$this->cache_ext}";
+			return $cache_file;
+		}
+
+		function request($url, $extra = array(), $force_post = false)
+		{
+			$oauth = array(
+				'oauth_version' => OAuthRequest::$version,
+				'oauth_nonce' => OAuthRequest::generate_nonce(),
+				'oauth_timestamp' => OAuthRequest::generate_timestamp(),
+				'oauth_consumer_key' => $this->consumer->key,
+				'oauth_token' => $this->access_token->key,
+				'oauth_signature_method'=>$this->oa_method->get_name()
+			);
+			
+			if (isset($extra['post']))
+				$params = $extra['post'];
+			elseif (isset($extra['get']))
+				$params = $extra['get'];
+			else
+				$params = array();
+			
+			if (isset($extra['post']) || $force_post)
+				$method = 'POST';
+			else
+				$method = 'GET';
+			
+			$params = array_merge($params, $oauth);
+			$request = new OAuthRequest($method, $url, $params);
+		    $params['oauth_signature'] = $request->build_signature($this->oa_method, $this->consumer, $this->access_token);
+
+			$extra[strtolower($method)] = $params;
+		    
+			return parent::request($url, $extra, $force_post);
+		}
+	}
