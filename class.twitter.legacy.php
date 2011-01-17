@@ -1,27 +1,18 @@
 <?php
 	require_once('class.restapi.php');
 	
-	class Twitter extends OAuthRestApi
+	class Twitter extends RestApi
 	{
 		protected $cache_ext = 'twitter';
-		protected $endpoint = 'https://api.twitter.com/1';
+		protected $endpoint = 'http://twitter.com';
 		
-		function getAuthorizeUrl($callback = false)
+		function __construct($username = false, $password = false)
 		{
-			return parent::getAuthorizeUrl("https://api.twitter.com/oauth/request_token", "https://twitter.com/oauth/authorize", $callback);
+			if ($username && $password)
+				$this->login($username, $password);
+			parent::__construct();
 		}
 		
-		function getAccessToken()
-		{
-			return parent::getAccessToken("https://api.twitter.com/oauth/access_token");
-		}
-		
-		function setCurlOpts($ch)
-		{
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		    parent::setCurlOpts($ch);
-		}
-
 		/********* STATUS METHODS *********/
 		
 		function public_timeline()
