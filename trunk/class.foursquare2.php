@@ -118,4 +118,12 @@
 			return $this->requestObjectItems('checkins', $url, array('get'=>$get));
 		}
 		
+		function user_venuehistory()
+		{
+			$url = "{$this->endpoint}users/self/venuehistory";
+			return $this->requestObjectItems('venues', $url);
+			
+			
+		}
+		
 	}
