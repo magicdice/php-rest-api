@@ -122,8 +122,12 @@
 		{
 			$url = "{$this->endpoint}users/self/venuehistory";
 			return $this->requestObjectItems('venues', $url);
-			
-			
+		}
+		
+		function user($user_id)
+		{
+			$url = "{$this->endpoint}users/$user_id";
+			return $this->requestObject('user', $url);
 		}
 		
 	}
