@@ -13,6 +13,7 @@
 		protected $cache_dir = "cache";
 		protected $cache_ext;
 		public $debug = false;
+		public $info;
 
 		function __construct()
 		{
@@ -147,19 +148,19 @@
 			$this->setCurlOpts($ch);
 			
 	        $response = curl_exec($ch);
-        	$info = curl_getinfo($ch);
+        	$this->info = curl_getinfo($ch);
         	curl_close($ch);
 			
 			if ($this->debug)
 			{
 				echo "\nINFO:\n";
-				print_r($info);
+				print_r($this->info);
 				echo "\nRESPONSE:\n";
 				echo htmlspecialchars($response);
 				echo "\n";
 			}
 
-			$object = $this->verify($info, $response);
+			$object = $this->verify($this->info, $response);
 			
 			if ($object !== false && !is_null($object))
 			{
