@@ -4,7 +4,7 @@
 	class Twitter extends OAuthRestApi
 	{
 		protected $cache_ext = 'twitter';
-		protected $endpoint = 'https://api.twitter.com/1';
+		protected $endpoint = 'https://api.twitter.com/1.1';
 		
 		function getAuthorizeUrl($callback = false)
 		{
@@ -300,5 +300,15 @@
 			$url = "{$this->endpoint}/notifications/leave/{$id}.{$this->format}";
 			return $this->request($url, array(), true);
 		}
+
+		/********* SEARCH METHODS *********/
+		function search($query, $params = array())
+		{
+			$url = "{$this->endpoint}/search/tweets.{$this->format}";
+			$get = array('q' => $query);
+			$get = array_merge($get, $params);
+			return $this->request($url, array('get'=>$get));
+		}
+
 		
 	}
