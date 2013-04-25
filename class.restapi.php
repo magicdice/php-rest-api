@@ -12,6 +12,7 @@
 		protected $cache_life = 3600;
 		protected $cache_dir = "cache";
 		protected $cache_ext;
+		protected $encodepost = false;
 		public $debug = false;
 		public $info;
 
@@ -89,8 +90,12 @@
 							$post .= '&';
 						else
 							$first = false;
-						//$post .= urlencode($param) . '=' . urlencode($value);
-						$post .= $param . '=' . $value;
+						if ($this->encodepost) {
+							$post .= urlencode($param) . '=' . urlencode($value);
+						}
+						else {
+							$post .= $param . '=' . $value;
+						}
 					}
 				}
 				elseif (is_string($extra['post']))

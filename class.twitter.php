@@ -5,6 +5,7 @@
 	{
 		protected $cache_ext = 'twitter';
 		protected $endpoint = 'https://api.twitter.com/1.1';
+		protected $encodepost = true;
 		
 		function getAuthorizeUrl($callback = false)
 		{
