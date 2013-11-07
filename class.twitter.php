@@ -311,5 +311,25 @@
 			return $this->request($url, array('get'=>$get));
 		}
 
+		/********* LIST METHODS *********/
+		function lists($user_id = false)
+		{
+			$url = "{$this->endpoint}/lists/list.{$this->format}";
+			if ($user_id) {
+				$get = array('user_id' => $user_id);
+			}
+			return $this->request($url, array('get' => $get));
+		}
+
+		function list_members($list_id, $cursor = -1)
+		{
+			$url = "{$this->endpoint}/lists/members.{$this->format}";
+			$get = array('list_id' => $list_id);
+			if ($cursor != -1 && $cursor) {
+				$get['cursor'] = $cursor;
+			}
+			return $this->request($url, array('get' => $get));
+		}
+
 		
 	}
