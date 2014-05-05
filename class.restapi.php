@@ -292,7 +292,7 @@
 			return $this->access_token = $token;
 		}
 		
-		function getCacheFile($url)
+		function getCacheFile($url, $post)
 		{
 			$url = preg_replace('/[\?|&]oauth_version.*$/','',$url);
 			$cache_file = $this->cache_dir . '/' .  md5($url.'|'.$this->access_token->key);
